@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:17.10 # Versão fixa para estabilidade do banco
+    container_name: unless-stopped
+    restart: unless-stoped
+    environment: # variáveis de configuração do banco
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports: # "host : container"
+      - "5432:5432"
+    volumes: # Onde ficarão armazenados os dados do banco 
+    - coworking-data:/var/lib/postgresql/data
+
+volumes:
+  coworking-data:
