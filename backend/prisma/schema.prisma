@@ -4,10 +4,91 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model Usuario {
+  id Int @id @default(autoincrement())
+
+  nome String
+
+  email String @unique
+
+  senha String
+
+  dtCriacao DateTime @default(now()) @map("dt_criacao") // @map pq aqui a gente usa camelCase e no bd usa snake_case
+
+  dtAtualizacao DateTime @updatedAt @map("dt_atualizacao")
+
+  eAdmin Boolean @default(false) @map("e_admin")
+
+  // Informações opcionais: O usuário não digita no cadastro, mas pode adicionar na aba do perfil
+
+  cpf String? @unique 
+
+  telefone String?
+  
+  // Chaves estrangeiras:
+
+  reservas Reserva[]
+
+  @@map("usuarios")
+}
+
+model Sala {
+  id Int @id @default(autoincrement())
+
+  nome String 
+
+  capacidade Int
+
+  eDisponivel Boolean @default(true) @map("e_disponivel") // True = Disponível; False = reservada
+
+  descricao String?
+
+  precoLocacao Float @map("preco_locacao")
+
+  dtCriacao DateTime @default(now()) @map("dt_criacao")
+
+  dtAtualizacao DateTime @updatedAt @map("dt_atualizacao")
+
+  // Chaves estrangeiras:
+
+  reservas Reserva[]
+
+
+  @@map("salas")
+}
+
+model Reserva {
+  id Int @id @default(autoincrement())
+
+  dia DateTime
+
+  turno String // MANHA, TARDE ou NOITE
+
+  status String? @default("RESERVADO") // cancelada, reservado - quando o user ta preechendo os campos pra reservar - VER DEPOIS
+
+  dtCriacao DateTime @default(now()) @map("dt_criacao")
+
+  dtAtualizacao DateTime @updatedAt @map("dt_atualizacao")
+
+  // Chaves estrangeiras:
+
+  idUsuario Int @map("id_usuario")
+
+  idSala Int @map("id_sala")
+
+  // Relações:
+
+  usuario Usuario @relation(fields: [idUsuario], references: [id], onDelete: Cascade)
+
+  sala Sala @relation(fields: [idSala], references: [id], onDelete: Cascade)
+
+  @@map("reservas")
 }
