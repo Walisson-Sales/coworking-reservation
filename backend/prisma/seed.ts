@@ -1,14 +1,4 @@
-import 'dotenv/config';
-import { PrismaClient } from '../src/generated/prisma/index.js';
-import { PrismaPg } from '@prisma/adapter-pg';
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-})
-
-const prisma = new PrismaClient({
-  adapter,
-})
+import { prisma } from '../src/lib/prismaClient.js'
 
 async function main(){
     console.log("Populando o banco com dados mocados");
